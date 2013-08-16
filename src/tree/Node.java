@@ -1,22 +1,9 @@
-/*
- * Copyright 2013 gestalt.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package stamp.util.tree;
 
-package tree;
+import java.lang.UnsupportedOperationException;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  *
@@ -24,54 +11,129 @@ import java.util.ArrayList;
  */
 public class Node<T> {
 
-	protected ArrayList<Node<T>> children = new ArrayList<Node<T>>();
-	protected Node<T> parent = null;
-	protected T data;
+    protected ArrayList<Node<T>> children = null;
+    protected Node<T> parent = null;
+    protected T data = null;
 
-	public Node(T id) {
-		data = id;
-	}
+    public Node() {
+    }
 
-	public Node(T id, ArrayList<Node<T>> initchildren) {
-		children = initchildren;
-		data = id;
-	}
+    public Node(T id) {
+        data = id;
+    }
 
-	public Node(T id, Node<T> initparent) {
-		parent = initparent;
-		data = id;
-	}
+    public Node(T id, ArrayList<Node<T>> initchildren) {
+        children = initchildren;
+        data = id;
+    }
 
-	public Node(T id, Node<T> initparent, ArrayList<Node<T>> initchildren) {
-		parent = initparent;
-		children = initchildren;
-		data = id;
-	}
+    public Node(T id, Node<T> initparent) {
+        parent = initparent;
+        data = id;
+    }
 
-	/**
-	 * 
-	 * @return parent node of this node. May be null.
-	 */
-	public Node<T> getParent() {
-		return parent;
-	}
+    public Node(T id, Node<T> initparent, ArrayList<Node<T>> initchildren) {
+        parent = initparent;
+        children = initchildren;
+        data = id;
+    }
 
-	/**
-	 * @return ArrayList of children of this node
-	 */
-	public ArrayList<Node<T>> getChildren() {
-		assert children != null;
-		return children;
-	}
+    /**
+     * 
+     * @return parent node of this node. May be null.
+     */
+    public Node<T> getParent() {
+        return parent;
+    }
 
-	public void addChild(Node<T> newchild) {
-		children.add(newchild);
-	}
+    protected void setParent(Node<T> newParent) {
+        parent = newParent;
+    }
 
-	public void addParent(Node<T> newparent) {
-		assert parent == null;
-		if (parent == null) {
-			parent = newparent;
-		}
-	}
+    public void replaceChild(Node<T> toReplace, T replacement) {
+        Node<T> newNode = new Node<T>(replacement, this);
+
+        if (children == null) {
+            return;
+        }
+
+        int ind = children.indexOf(toReplace);
+        if (ind == -1) {
+            return; // TODO throw exception?
+        }
+
+        children.set(ind, newNode);
+        newNode.addChild(toReplace);
+        toReplace.setParent(newNode);
+    }
+
+    /**
+     * @return ArrayList of children of this node
+     */
+    public ArrayList<Node<T>> getChildren() {
+        return children;
+    }
+
+    public Node<T> addChild(Node<T> newchild) {
+        if (children == null) {
+            children = new ArrayList<Node<T>>();
+        }
+        children.add(newchild);
+        return newchild;
+    }
+
+    public Node<T> addChild(T newData) {
+        Node<T> newChild = new Node<T>(newData, this);
+        return addChild(newChild);
+    }
+
+    public void addParent(Node<T> newparent) throws UnsupportedOperationException {
+        if (parent == null) {
+            parent = newparent;
+        } else {
+            throw new UnsupportedOperationException("Tree: Adding new "
+                    + "parent to Node with non-null parent.");
+        }
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public boolean hasChildren() {
+        return !(children == null || children.size() == 0);
+    }
+
+    public NodeIterator iterator() {
+        return new NodeIterator();
+    }
+
+    class NodeIterator implements Iterator<Node<T>> {
+
+        Iterator<Node<T>> itr = null;
+    
+        public NodeIterator() {
+            itr = children.iterator();
+            System.err.println("LENGTH: "+children.size());
+            System.err.println("CONTENTS");
+            for (Node<T> n : children) {
+                System.err.println(n.getData());
+            }
+            System.err.println("EMDCONTENTS");
+        }
+
+        public boolean hasNext() {
+            return itr.hasNext();
+        }
+    
+        public Node<T> next() {
+            return itr.next();
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+        //Does not implement remove, currently
+    }
 }
