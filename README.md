@@ -1,4 +1,4 @@
 javatree
 ========
 
-A Simple Java Tree Implementation Aimed at Some Specific Use Cases
+A Simple Java Tree Data Structure Implementation Aimed at Some Specific Use Cases
