@@ -1,5 +1,4 @@
 /*   
- *   :::text
  *   Copyright 2013 Bryce Cronkite-Ratcliff
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +33,7 @@ import java.util.Iterator;
  */
 public class Tree<T> {
 
-    protected static final String defaultRootLabel = "AnonTree";
+    protected static final String DEFAULT_ROOT_LABEL = "AnonTree";
 
     /* Root Node. Can contain useful data or be null-like */
     protected Node<T> root;
@@ -61,7 +60,7 @@ public class Tree<T> {
     public Tree(T rootData) {
         root = new Node<T>(rootData);
         root.setParent(root);
-        label = defaultRootLabel;
+        label = DEFAULT_ROOT_LABEL;
     }
 
     /**
